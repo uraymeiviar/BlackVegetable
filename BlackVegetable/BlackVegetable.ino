@@ -20,7 +20,6 @@ void setup() {
   initSensorLight();
   initRelayClient();
   initWebServer();
-  relaySetState(0,true);
 }
 
 void loop() {
