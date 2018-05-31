@@ -55,7 +55,14 @@ void loopWebServer()
   if (webClient) 
   {
     webReceiveBufferNdx = 0;
-    Serial.println("webserver new client");
+    uint8_t remoteIP[4];
+    getRemoteIP(webClient,remoteIP);
+    char ipString[20];
+    formatIPAddr(remoteIP,ipString);
+  
+    Serial.print("webserver new client from ");
+    Serial.println(ipString);
+    
     boolean currentLineIsBlank = true;
     while (webClient.connected()) 
     {

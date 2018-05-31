@@ -1,8 +1,12 @@
 byte relayIP[] = { 192, 168, 1, 17 };
+IPAddress relayIPAddress(relayIP[0],relayIP[1],relayIP[2],relayIP[3]);
 const char relayInitCMD[] = {0xaa, 0x1e,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0xbb};
 uint16_t relayPort = 8080;
 EthernetClient relayClient;
-
+SOCKET relayPingSocket = 0;
+ICMPPing ping(relayPingSocket, (uint16_t)random(0, 255));
+#define relayNotRespondingTimeout 5000
+unsigned long relayLastRespondMs = 0;
 const int relayReplyLength = 20;
 int relayReplyCount = 0;
 char relayReply[20] = {0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
@@ -47,17 +51,12 @@ void printRelayState(int index)
 boolean connectToRelay()
 {
   Serial.print("connecting to relay ");
-  Serial.print(relayIP[0],DEC);
-  Serial.print(".");
-  Serial.print(relayIP[1],DEC);
-  Serial.print(".");
-  Serial.print(relayIP[2],DEC);
-  Serial.print(".");
-  Serial.print(relayIP[3],DEC);
+  serialPrintIPAddr(relayIP);
   Serial.println();
   
   if (relayClient.connect(relayIP, relayPort)) 
   {
+    relayLastRespondMs = millis();
     Serial.println("connected to relay");
     return true;
   } 
@@ -76,6 +75,7 @@ boolean getRelayResponse()
     relayReply[relayReplyCount] = relayClient.read();
     serialPrintHex(relayReply[relayReplyCount]);
     relayReplyCount++;
+    relayLastRespondMs = millis();
   }
 
   if( relayReplyCount == relayReplyLength )
@@ -92,7 +92,9 @@ boolean getRelayResponse()
     }
     return true;
   }
-  return false;
+  else{
+    return false;
+  }
 }
 
 //.................................................................................
@@ -124,14 +126,50 @@ boolean waitRelayResponse(int retryCount = 10, int retryDelay = 10)
 
 //.................................................................................
 
+unsigned long pingRelay()
+{
+  ICMPEchoReply echoReply = ping(relayIPAddress, 4);
+  if (echoReply.status == SUCCESS)
+  {
+    unsigned long ms = millis() - echoReply.data.time;
+    Serial.print("relay ping (ms) = ");
+    Serial.println(ms);
+    return ms;
+  }
+  else
+  {
+    Serial.println("relay ping failed");
+    return (unsigned long)-1;
+  }
+}
+
+//.................................................................................
+
 void loopRelayClient()
 {
   if (relayClient.connected()) 
   {
-    getRelayResponse();
+    if(!getRelayResponse())
+    {
+      unsigned long deltams = millis() - relayLastRespondMs;
+      if(deltams > relayNotRespondingTimeout){
+         Serial.print("relay not responding for ");
+         Serial.print(deltams);
+         Serial.println(" ms ");
+         if(pingRelay() == (unsigned long)(-1))
+         {
+            Serial.println("Relay disconnected.");
+            relayClient.stop();
+         }
+         else{
+            relayLastRespondMs = millis();
+         }
+      }
+    }
   }
   else
   {
+    Serial.println("relay not connected");
     if(connectToRelay())
     {
       relayClient.write(relayInitCMD, sizeof(relayInitCMD));

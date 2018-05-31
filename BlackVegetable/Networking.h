@@ -1,19 +1,36 @@
 #include <Ethernet.h>
 #include <EthernetClient.h>
 #include <EthernetServer.h>
+#include <ICMPPing.h>
+extern "C" {
+ #include "utility/w5100.h"
+}
+
+void getRemoteIP(EthernetClient& client, uint8_t *ptRemoteIP)
+{
+  W5100.readSnDIPR(client.getSocketNumber(), ptRemoteIP);
+}
 
 byte mac[] = {
   0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02
 };
 
-void printIPAddress()
+void formatIPAddr(const uint8_t* ip, char* out)
+{
+  sprintf(out, "%d.%d.%d.%d", ip[0], ip[1], ip[2],ip[3]);
+}
+
+void serialPrintIPAddr(const uint8_t* ip)
 {
   char ipString[20];
-  sprintf(ipString, "%d.%d.%d.%d", 
-    Ethernet.localIP()[0], 
-    Ethernet.localIP()[1], 
-    Ethernet.localIP()[2],
-    Ethernet.localIP()[3]);
+  formatIPAddr((const uint8_t*)ip,ipString);
+  Serial.print(ipString);
+}
+
+void printMyIPAddress(const uint32_t ip)
+{
+  char ipString[20];
+  formatIPAddr((const uint8_t*)&ip,ipString);
 
   Serial.print("My IP address: ");
   Serial.print(ipString);
@@ -34,7 +51,7 @@ void initNetworking(void)
   if (Ethernet.begin(mac) == 0) {
       Serial.println("Failed to configure Ethernet using DHCP");
   }
-  printIPAddress();
+  printMyIPAddress(Ethernet.localIP());
 }
 
 void loopNetworking(void)
@@ -51,7 +68,7 @@ void loopNetworking(void)
       Serial.println("Renewed success");
   
       //print your local IP address:
-      printIPAddress();
+      printMyIPAddress(Ethernet.localIP());
       break;
   
     case 3:
@@ -64,7 +81,7 @@ void loopNetworking(void)
       Serial.println("Rebind success");
   
       //print your local IP address:
-      printIPAddress();
+      printMyIPAddress(Ethernet.localIP());
       break;
   
     default:
