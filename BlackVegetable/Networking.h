@@ -27,20 +27,46 @@ void serialPrintIPAddr(const uint8_t* ip)
   Serial.print(ipString);
 }
 
+String IpAddress2String(const IPAddress& ipAddress)
+{
+  return String(ipAddress[0]) + String(".") +\
+  String(ipAddress[1]) + String(".") +\
+  String(ipAddress[2]) + String(".") +\
+  String(ipAddress[3])  ; 
+}
+
+String getMACString()
+{
+  String result = "";
+  for(int i=0 ; i<6 ; i++)
+  {
+    if(mac[i] <= 0x0F)
+    {
+      result += "0";
+    }
+    result += String(mac[i],16);
+    if(i < 5)
+    {
+      result += ":";
+    }
+  }
+  return result;
+}
+
 void printMyIPAddress(const uint32_t ip)
 {
-  char ipString[20];
-  formatIPAddr((const uint8_t*)&ip,ipString);
+  String myIpStr = IpAddress2String(Ethernet.localIP());
+  myIpStr +=" "+getMACString();
 
   Serial.print("My IP address: ");
-  Serial.print(ipString);
+  Serial.print(myIpStr.c_str());
   Serial.println();
 
   lcd.setTextSize(1);
-  lcd.fillRect(160, 0, 80, 10, BLACK);
+  lcd.fillRect(130, 0, 110, 10, BLACK);
   lcd.setTextColor(WHITE);
-  lcd.setCursor(162, 2);
-  lcd.print(ipString);
+  lcd.setCursor(132, 2);
+  lcd.print(myIpStr.c_str());
 }
 
 void initNetworking(void)

@@ -1,6 +1,16 @@
+#define MAX_WEBURL_HOOK 8
 const uint16_t webServerPort = 80;
 EthernetServer webServer(webServerPort);
+#define webReceiveBufferMaxLen  256
+char webReceiveBuffer[webReceiveBufferMaxLen];
+int webReceiveBufferNdx = 0;
+String (* webServerURLHook[MAX_WEBURL_HOOK])(const String& url);
+
 void initWebServer() {
+  for(int i=0 ; i<MAX_WEBURL_HOOK ; i++)
+  {
+    webServerURLHook[i] = NULL;
+  }
   webServer.begin();
   Serial.print("webserver is at ");
   Serial.print(Ethernet.localIP());
@@ -8,9 +18,11 @@ void initWebServer() {
   Serial.println(webServerPort);
 }
 
-#define webReceiveBufferMaxLen  256
-char webReceiveBuffer[webReceiveBufferMaxLen];
-int webReceiveBufferNdx = 0;
+#define HTTP_RESPONSE_HEADER "HTTP/1.1 200 OK\r\n\
+Content-Type: application/json\r\n\
+Cache-Control: no-cache\r\n\
+Connection: close\r\n\
+Content-Length: "
 
 void responseToRequest(EthernetClient& webClient)
 { 
@@ -40,13 +52,28 @@ void responseToRequest(EthernetClient& webClient)
   }
   Serial.print("URL request = ");
   Serial.println(webReceiveBuffer);
+  String requestUrl(webReceiveBuffer);
+
+  String response = "{\"device\":\"BlackVegetableOS 1.0\",";
+  response += "\"mac\":\""+getMACString()+"\",";
+  response += "\"ip\":\""+IpAddress2String(Ethernet.localIP())+"\"";
   
-  webClient.println("HTTP/1.1 200 OK");
-  webClient.println("Content-Type: application/json");
-  webClient.println("Cache-Control: no-cache");
-  webClient.println("Connection: close"); 
-  webClient.println("Content-Length: 34");
-  webClient.println("{\"device\":\"BlackVegetableOS 1.0\"}");
+  for(int i=0 ; i<MAX_WEBURL_HOOK ; i++)
+  {
+    if(webServerURLHook[i] != NULL)
+    {
+      String reply = webServerURLHook[i](requestUrl);
+      if(reply.length() > 0){
+        response += ",";
+        response += reply;
+      }
+    }
+  }
+  response += "}";
+  
+  webClient.print(HTTP_RESPONSE_HEADER);
+  webClient.println(response.length());
+  webClient.println(response.c_str());
 }
 
 void loopWebServer()

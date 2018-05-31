@@ -6,9 +6,9 @@ int  LightAnalogValue = 0; /* Holds the last analog value */
 void initSensorLight(void)
 {
   lcd.setTextSize(1);
-  lcd.fillRect(140, 10, 60, 10, BLACK);
+  lcd.fillRect(180, 12, 90, 10, BLACK);
   lcd.setTextColor(YELLOW);
-  lcd.setCursor(141, 12);
+  lcd.setCursor(181, 14);
   lcd.print("Light (%)");
 }
 
@@ -44,9 +44,9 @@ void loopSensorLight(void)
     Serial.println();     */
 
     lcd.setTextSize(2);
-    lcd.fillRect(141, 20, 60, 30, BLACK);
+    lcd.fillRect(180, 22, 90, 30, BLACK);
     lcd.setTextColor(YELLOW);
-    lcd.setCursor(141, 21);
+    lcd.setCursor(181, 23);
     lcd.print(lightString);
   }
 

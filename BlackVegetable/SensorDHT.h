@@ -10,14 +10,14 @@ void initSensorDHT(void)
 {
   sensorDHT.begin();
   lcd.setTextSize(1);
-  lcd.fillRect(0, 10, 60, 10, BLACK);
+  lcd.fillRect(0, 12, 90, 10, BLACK);
   lcd.setTextColor(GREEN);
-  lcd.setCursor(1, 12);
+  lcd.setCursor(1, 14);
   lcd.print("Temp (C)");
   
-  lcd.fillRect(70, 10, 60, 10, BLACK);
+  lcd.fillRect(90, 12, 90, 10, BLACK);
   lcd.setTextColor(LIGHTBLUE);
-  lcd.setCursor(71, 12);
+  lcd.setCursor(91, 14);
   lcd.print("RH (%)");
 }
 
@@ -37,17 +37,17 @@ void loopSensorDHT(void)
 
     if(new_temp != currentAirTemp){
       lcd.setTextSize(2);
-      lcd.fillRect(0, 20, 60, 30, BLACK);
+      lcd.fillRect(0, 22, 90, 30, BLACK);
       lcd.setTextColor(GREEN);
-      lcd.setCursor(1, 21);
+      lcd.setCursor(1, 23);
       lcd.print(currentAirTemp);
     }
 
     if(new_hum != currentAirHumidity){
       lcd.setTextSize(2);
-      lcd.fillRect(71, 20, 60, 30, BLACK);
+      lcd.fillRect(90, 22, 90, 30, BLACK);
       lcd.setTextColor(LIGHTBLUE);
-      lcd.setCursor(71, 21);
+      lcd.setCursor(91, 23);
       lcd.print(currentAirHumidity);
     }
 

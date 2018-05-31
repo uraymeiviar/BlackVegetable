@@ -3,10 +3,10 @@ const char DeviceName[] = "BlackVegetableOS 1.0";
 #include "LCD.h"
 #include "Timing.h"
 #include "Networking.h"
+#include "WebServer.h"
 #include "SensorDHT.h"
 #include "SensorLight.h"
 #include "ClientRelay.h"
-#include "WebServer.h"
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -15,11 +15,10 @@ void setup() {
   initLCD();
   initTiming();
   initNetworking();
-
+  initWebServer();
   initSensorDHT();
   initSensorLight();
   initRelayClient();
-  initWebServer();
 }
 
 void loop() {

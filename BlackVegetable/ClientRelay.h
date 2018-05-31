@@ -6,7 +6,9 @@ EthernetClient relayClient;
 SOCKET relayPingSocket = 0;
 ICMPPing ping(relayPingSocket, (uint16_t)random(0, 255));
 #define relayNotRespondingTimeout 5000
+#define relayMinSetStateInterval 1000
 unsigned long relayLastRespondMs = 0;
+unsigned long relayLastSetStateMs = 0;
 const int relayReplyLength = 20;
 int relayReplyCount = 0;
 char relayReply[20] = {0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
@@ -69,11 +71,222 @@ boolean connectToRelay()
 
 //.................................................................................
 
+void updateRelayState(int index, boolean value)
+{
+  if(relayState[index] != value)
+  {
+    lcd.setTextSize(2);
+    relayState[index] = value;
+    if(value)
+    {
+      lcd.setTextColor(LIGHTGREEN);
+      if(index == 0)
+      {
+        lcd.fillRect(  4, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(6, 388);
+        lcd.print("01");
+      }
+      else if(index == 1)
+      {
+        lcd.fillRect(  4, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(6, 427);
+        lcd.print("02");
+      }
+      else if(index == 2)
+      { 
+        lcd.fillRect( 43, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(45, 388);
+        lcd.print("03");
+      }
+      else if(index == 3)
+      { 
+        lcd.fillRect( 43, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(45, 427);
+        lcd.print("04");
+      }
+      else if(index == 4)
+      { 
+        lcd.fillRect( 82, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(84, 388);
+        lcd.print("05");
+      }
+      else if(index == 5)
+      { 
+        lcd.fillRect( 82, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(84, 427);
+        lcd.print("06");
+      }
+      else if(index == 6)
+      { 
+        lcd.fillRect(121, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(123, 388);
+        lcd.print("07");
+      }
+      else if(index == 7)
+      { 
+        lcd.fillRect(121, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(123, 427);
+        lcd.print("08");
+      }
+      else if(index == 8)
+      { 
+        lcd.fillRect(160, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(162, 388);
+        lcd.print("09");
+      }
+      else if(index == 9)
+      { 
+        lcd.fillRect(160, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(162, 427);
+        lcd.print("10");
+      }
+      else if(index == 10)
+      { 
+        lcd.fillRect(199, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(201, 388);
+        lcd.print("11");
+      }
+      else if(index == 11)
+      { 
+        lcd.fillRect(199, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(201, 427);
+        lcd.print("12");
+      }
+      else if(index == 12)
+      { 
+        lcd.fillRect(238, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(240, 388);
+        lcd.print("13");
+      }
+      else if(index == 13)
+      { 
+        lcd.fillRect(238, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(240, 427);
+        lcd.print("14");
+      }
+      else if(index == 14)
+      { 
+        lcd.fillRect(277, 386, 38, 38, DARKGREEN);
+        lcd.setCursor(279, 388);
+        lcd.print("15");
+      }
+      else if(index == 15)
+      { 
+        lcd.fillRect(277, 425, 38, 38, DARKGREEN);
+        lcd.setCursor(279, 427);
+        lcd.print("16");
+      }
+    }
+    else
+    {
+      lcd.setTextColor(LIGHTRED);
+      if(index == 0)
+      {
+        lcd.fillRect(  4, 386, 38, 38, DARKRED);
+        lcd.setCursor(6, 388);
+        lcd.print("01");
+      }
+      else if(index == 1)
+      {
+        lcd.fillRect(  4, 425, 38, 38, DARKRED);
+        lcd.setCursor(6, 427);
+        lcd.print("02");
+      }
+      else if(index == 2)
+      { 
+        lcd.fillRect( 43, 386, 38, 38, DARKRED);
+        lcd.setCursor(45, 388);
+        lcd.print("03");
+      }
+      else if(index == 3)
+      { 
+        lcd.fillRect( 43, 425, 38, 38, DARKRED);
+        lcd.setCursor(45, 427);
+        lcd.print("04");
+      }
+      else if(index == 4)
+      { 
+        lcd.fillRect( 82, 386, 38, 38, DARKRED);
+        lcd.setCursor(84, 388);
+        lcd.print("05");
+      }
+      else if(index == 5)
+      { 
+        lcd.fillRect( 82, 425, 38, 38, DARKRED);
+        lcd.setCursor(84, 427);
+        lcd.print("06");
+      }
+      else if(index == 6)
+      { 
+        lcd.fillRect(121, 386, 38, 38, DARKRED);
+        lcd.setCursor(123, 388);
+        lcd.print("07");
+      }
+      else if(index == 7)
+      { 
+        lcd.fillRect(121, 425, 38, 38, DARKRED);
+        lcd.setCursor(123, 427);
+        lcd.print("08");
+      }
+      else if(index == 8)
+      { 
+        lcd.fillRect(160, 386, 38, 38, DARKRED);
+        lcd.setCursor(162, 388);
+        lcd.print("09");
+      }
+      else if(index == 9)
+      { 
+        lcd.fillRect(160, 425, 38, 38, DARKRED);
+        lcd.setCursor(162, 427);
+        lcd.print("10");
+      }
+      else if(index == 10)
+      { 
+        lcd.fillRect(199, 386, 38, 38, DARKRED);
+        lcd.setCursor(201, 388);
+        lcd.print("11");
+      }
+      else if(index == 11)
+      { 
+        lcd.fillRect(199, 425, 38, 38, DARKRED);
+        lcd.setCursor(201, 427);
+        lcd.print("12");
+      }
+      else if(index == 12)
+      { 
+        lcd.fillRect(238, 386, 38, 38, DARKRED);
+        lcd.setCursor(240, 388);
+        lcd.print("13");
+      }
+      else if(index == 13)
+      { 
+        lcd.fillRect(238, 425, 38, 38, DARKRED);
+        lcd.setCursor(240, 427);
+        lcd.print("14");
+      }
+      else if(index == 14)
+      { 
+        lcd.fillRect(277, 386, 38, 38, DARKRED);
+        lcd.setCursor(279, 388);
+        lcd.print("15");
+      }
+      else if(index == 15)
+      { 
+        lcd.fillRect(277, 425, 38, 38, DARKRED);
+        lcd.setCursor(279, 427);
+        lcd.print("16");
+      }
+    }
+  }
+}
+
+//.................................................................................
+
 boolean getRelayResponse()
 {
   while(relayClient.connected() && relayClient.available() && relayReplyCount<relayReplyLength){
     relayReply[relayReplyCount] = relayClient.read();
-    serialPrintHex(relayReply[relayReplyCount]);
+    //serialPrintHex(relayReply[relayReplyCount]);
     relayReplyCount++;
     relayLastRespondMs = millis();
   }
@@ -81,12 +294,12 @@ boolean getRelayResponse()
   if( relayReplyCount == relayReplyLength )
   {
     relayReplyCount = 0;
-    Serial.println();
+    //Serial.println();
     if(relayReply[1] == 0x0c){
       Serial.println("relay switch state changed");
       for(int i=0 ; i<16 ; i++)
       {
-        relayState[i] = (relayReply[2+i] == 0x01);
+        updateRelayState(i, relayReply[2+i] == 0x01);
         printRelayState(i);
       }
     }
@@ -185,10 +398,6 @@ boolean relayGetState(uint8_t index)
 {
   if(index >= 0 && index < 16)
   {
-    Serial.print("relay ");
-    Serial.print(index);
-    Serial.print(" state = ");
-    Serial.println((int)relayState[index]);
     return relayState[index];
   }
   else
@@ -201,6 +410,12 @@ boolean relayGetState(uint8_t index)
 
 boolean relaySetState(uint8_t index, boolean state)
 {
+  unsigned long setStateInterval = millis() - relayLastSetStateMs;
+  if( setStateInterval < relayMinSetStateInterval)
+  {
+    delay(relayMinSetStateInterval - setStateInterval);
+    Serial.println("relay set state too fast, delaying..");
+  }
   char stateValue = 0x02;
   if(state == true)
   {
@@ -222,6 +437,7 @@ boolean relaySetState(uint8_t index, boolean state)
   relayClient.write(switchCMD, sizeof(switchCMD));
   relayClient.flush();
   waitRelayResponse();
+  relayLastSetStateMs = millis();
 
   return relayGetState(index);
 }
@@ -237,12 +453,148 @@ boolean relayToggleState(uint8_t index)
 
 //.................................................................................
 
+String relayHandleWebRequest(const String& url)
+{
+  if(url.startsWith("/relay/"))
+  {
+    int relayNdxPos = url.indexOf('/',7);
+    String relayNdxStr = url.substring(7, relayNdxPos);
+    int relayNdx = relayNdxStr.toInt();
+    if(relayNdx > 0 && relayNdx <= 16)
+    {
+      String relayStateStr = url.substring(relayNdxPos+1);
+      relayStateStr.trim();
+      if(relayStateStr.equalsIgnoreCase(String("on")))
+      {
+        relaySetState(relayNdx-1, true);
+      }
+      else if(relayStateStr.equalsIgnoreCase(String("off")))
+      {
+        relaySetState(relayNdx-1, false);
+      }
+      else if(relayStateStr.equalsIgnoreCase(String("toggle")))
+      {
+        relayToggleState(relayNdx-1);
+      }
+      else
+      {
+        Serial.print("(web) relay set invalid value for ndx ");
+        Serial.println(relayNdxStr.c_str());
+        Serial.println(relayStateStr.c_str());
+      }
+    }
+    else{
+      Serial.print("(web) relay set invalid ndx");
+    }
+  }
+  String result = "\"relay\":[";
+  for(int i=0 ; i<16 ; i++)
+  {
+    if(relayGetState(i))
+    {
+      result += "1";
+    }
+    else
+    {
+      result += "0";
+    }
+    if(i <= 14){
+      result +=",";
+    }
+  }
+  result+= "]";
+  return result;
+}
+
+//.................................................................................
+
 void initRelayClient()
 {
+  lcd.drawLine(197,480,197,467,DARKGREEN);
+  lcd.drawLine(197,467,320,467,DARKGREEN);
+  lcd.drawLine(0  ,382,320,382,DARKGREEN);
+
+  lcd.setTextColor(LIGHTRED);
+  lcd.setTextSize(2);
+  
+  lcd.fillRect(  4, 386, 38, 38, DARKRED);
+  lcd.fillRect( 43, 386, 38, 38, DARKRED);
+  lcd.fillRect( 82, 386, 38, 38, DARKRED);
+  lcd.fillRect(121, 386, 38, 38, DARKRED);
+  lcd.fillRect(160, 386, 38, 38, DARKRED);
+  lcd.fillRect(199, 386, 38, 38, DARKRED);
+  lcd.fillRect(238, 386, 38, 38, DARKRED);
+  lcd.fillRect(277, 386, 38, 38, DARKRED);
+  
+  lcd.fillRect(  4, 425, 38, 38, DARKRED);
+  lcd.fillRect( 43, 425, 38, 38, DARKRED);
+  lcd.fillRect( 82, 425, 38, 38, DARKRED);
+  lcd.fillRect(121, 425, 38, 38, DARKRED);
+  lcd.fillRect(160, 425, 38, 38, DARKRED);
+  lcd.fillRect(199, 425, 38, 38, DARKRED);
+  lcd.fillRect(238, 425, 38, 38, DARKRED);
+  lcd.fillRect(277, 425, 38, 38, DARKRED);
+
+  lcd.setCursor(6, 388);
+  lcd.print("01");
+
+  lcd.setCursor(45, 388);
+  lcd.print("03");
+
+  lcd.setCursor(84, 388);
+  lcd.print("05");
+
+  lcd.setCursor(123, 388);
+  lcd.print("07");
+
+  lcd.setCursor(162, 388);
+  lcd.print("09");
+
+  lcd.setCursor(201, 388);
+  lcd.print("11");
+
+  lcd.setCursor(240, 388);
+  lcd.print("13");
+
+  lcd.setCursor(279, 388);
+  lcd.print("15");
+
+  lcd.setCursor(6, 427);
+  lcd.print("02");
+
+  lcd.setCursor(45, 427);
+  lcd.print("04");
+
+  lcd.setCursor(84, 427);
+  lcd.print("06");
+
+  lcd.setCursor(123, 427);
+  lcd.print("08");
+
+  lcd.setCursor(162, 427);
+  lcd.print("10");
+
+  lcd.setCursor(201, 427);
+  lcd.print("12");
+
+  lcd.setCursor(240, 427);
+  lcd.print("14");
+
+  lcd.setCursor(279, 427);
+  lcd.print("16");
+  
+  lcd.setCursor(4, 470);
+  lcd.setTextColor(GREEN);
+  lcd.setTextSize(1);
+  lcd.print("Relay State");
+  
+  webServerURLHook[0] = &relayHandleWebRequest;
   if(connectToRelay()){
     relayClient.write(relayInitCMD, sizeof(relayInitCMD));
     relayClient.flush();
     waitRelayResponse();
   }
 }
+
+
 

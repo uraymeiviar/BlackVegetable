@@ -21,6 +21,10 @@
 #define PURPLE    RGB(128,   0, 128)
 #define ORANGE    RGB(255, 128,  64)
 #define LIGHTBLUE RGB( 64,  64, 255)
+#define LIGHTGREEN RGB(128, 255,128)
+#define LIGHTRED  RGB(255,128,128)
+#define DARKGREEN RGB( 0,  64, 0)
+#define DARKRED   RGB(72,  0,  0)
 
 MCUFRIEND_kbv lcd;
 
@@ -50,4 +54,5 @@ void initLCD(void)
   lcd.setTextColor(GREY);
   lcd.setTextSize(1);
   lcd.print(DeviceName);
+  lcd.drawLine(0,11,360,11,GREY);
 }

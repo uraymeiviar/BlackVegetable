@@ -40,7 +40,7 @@ void updateClock(void)
     //Serial.println(clock_msDrift);
     clock_msCumulative = 0;
 
-    char clockString[20];
+    
     if (clockSec > 59) 
     {
           clockSec = 0;
@@ -52,14 +52,14 @@ void updateClock(void)
               if (clockHour > 23) clockHour = 0;
           }
      }
-
-    sprintf(clockString, "%02d:%02d:%02d.%03d", clockHour, clockMin, clockSec, clock_msCumulative+clock_msDrift);
-    lcd.setTextSize(1);
-    lcd.fillRect(240, 0, 80, 10, WHITE);
-    lcd.setTextColor(BLACK);
-    lcd.setCursor(242, 2);
-    lcd.print(clockString);
   }
+  char clockString[20];
+  sprintf(clockString, "%02d:%02d:%02d.%03d", clockHour, clockMin, clockSec, clock_msCumulative+clock_msDrift);
+  lcd.setTextSize(1);
+  lcd.fillRect(240, 470, 80, 10, BLACK);
+  lcd.setTextColor(WHITE);
+  lcd.setCursor(242, 471);
+  lcd.print(clockString);
   clock_startTiming = currentMilis;
 }
 
@@ -74,19 +74,22 @@ void loopTimingBegin()
 void loopTimingEnd()
 {
   char timingString[10];
-  sprintf(timingString, "%dms", loopInterval);
+  sprintf(timingString, "%d ms", loopInterval);
   
   lcd.setTextSize(1);
   if(loopInterval > loopDelayMS)
   {
-    lcd.fillRect(130, 0, 30, 10, RED);
+    lcd.fillRect(200, 470, 40, 10, RED);
     lcd.setTextColor(WHITE);
   }
   else{
-    lcd.fillRect(130, 0, 30, 10, BLACK);
-    lcd.setTextColor(GREEN);
+    float percent = (float)loopInterval / (float)loopDelayMS;
+    int barWidth = (int)(40.0*percent);
+    lcd.fillRect(200, 470, barWidth, 10, DARKGREEN);
+    lcd.fillRect(200+barWidth+1, 470, 40-barWidth, 10, BLACK);
+    lcd.setTextColor(LIGHTGREEN);
   }
-  lcd.setCursor(131, 2);
+  lcd.setCursor(201, 471);
   lcd.print(timingString);
   
   updateClock();
