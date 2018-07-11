@@ -54,9 +54,9 @@ void responseToRequest(EthernetClient& webClient)
   Serial.println(webReceiveBuffer);
   String requestUrl(webReceiveBuffer);
 
-  String response = "{\"device\":\"BlackVegetableOS 1.0\",";
-  response += "\"mac\":\""+getMACString()+"\",";
-  response += "\"ip\":\""+IpAddress2String(Ethernet.localIP())+"\"";
+  String response = "\r\n\r\n{\r\n\t\"device\":\"BlackVegetableOS 1.0\",\r\n";
+  response += "\t\"mac\":\""+getMACString()+"\",\r\n";
+  response += "\t\"ip\":\""+IpAddress2String(Ethernet.localIP())+"\"";
   
   for(int i=0 ; i<MAX_WEBURL_HOOK ; i++)
   {
@@ -64,12 +64,12 @@ void responseToRequest(EthernetClient& webClient)
     {
       String reply = webServerURLHook[i](requestUrl);
       if(reply.length() > 0){
-        response += ",";
+        response += ",\r\n";
         response += reply;
       }
     }
   }
-  response += "}";
+  response += "\r\n}\r\n";
   
   webClient.print(HTTP_RESPONSE_HEADER);
   webClient.println(response.length());

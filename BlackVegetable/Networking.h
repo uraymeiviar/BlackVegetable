@@ -71,6 +71,7 @@ void printMyIPAddress(const uint32_t ip)
 
 void initNetworking(void)
 {
+  Serial.println("initializing networking...");
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
 
@@ -78,6 +79,7 @@ void initNetworking(void)
       Serial.println("Failed to configure Ethernet using DHCP");
   }
   printMyIPAddress(Ethernet.localIP());
+  Serial.println("networking initialization done.");
 }
 
 void loopNetworking(void)

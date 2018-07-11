@@ -56,7 +56,7 @@ void updateClock(void)
   char clockString[20];
   sprintf(clockString, "%02d:%02d:%02d.%03d", clockHour, clockMin, clockSec, clock_msCumulative+clock_msDrift);
   lcd.setTextSize(1);
-  lcd.fillRect(240, 470, 80, 10, BLACK);
+  lcd.fillRect(240, 468, 80, 12, BLACK);
   lcd.setTextColor(WHITE);
   lcd.setCursor(242, 471);
   lcd.print(clockString);
@@ -85,8 +85,8 @@ void loopTimingEnd()
   else{
     float percent = (float)loopInterval / (float)loopDelayMS;
     int barWidth = (int)(40.0*percent);
-    lcd.fillRect(200, 470, barWidth, 10, DARKGREEN);
-    lcd.fillRect(200+barWidth+1, 470, 40-barWidth, 10, BLACK);
+    lcd.fillRect(198, 468, barWidth+2, 12, DARKRED);
+    lcd.fillRect(198+barWidth+1, 468, 40-barWidth+2, 12, BLACK);
     lcd.setTextColor(LIGHTGREEN);
   }
   lcd.setCursor(201, 471);

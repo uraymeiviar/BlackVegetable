@@ -1,0 +1,13 @@
+body{
+    margin:0; 
+    padding:0;
+}
+
+#chartContainer {
+    width:100%;
+}
+
+#chart {
+    display:block;
+    width: 100vw; 
+}

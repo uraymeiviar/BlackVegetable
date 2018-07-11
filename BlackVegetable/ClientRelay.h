@@ -8,7 +8,7 @@ ICMPPing ping(relayPingSocket, (uint16_t)random(0, 255));
 #define relayNotRespondingTimeout 5000
 #define relayMinSetStateInterval 1000
 unsigned long relayLastRespondMs = 0;
-unsigned long relayLastSetStateMs = 0;
+unsigned long relayLastSetStateMs[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 const int relayReplyLength = 20;
 int relayReplyCount = 0;
 char relayReply[20] = {0x00, 0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
@@ -85,90 +85,135 @@ void updateRelayState(int index, boolean value)
         lcd.fillRect(  4, 386, 38, 38, DARKGREEN);
         lcd.setCursor(6, 388);
         lcd.print("01");
+        lcd.setTextSize(1);
+        lcd.setCursor(6, 413);
+        lcd.print("GLt1");
       }
       else if(index == 1)
       {
         lcd.fillRect(  4, 425, 38, 38, DARKGREEN);
         lcd.setCursor(6, 427);
         lcd.print("02");
+        lcd.setTextSize(1);
+        lcd.setCursor(6, 452);
+        lcd.print("GLt2");
       }
       else if(index == 2)
       { 
         lcd.fillRect( 43, 386, 38, 38, DARKGREEN);
         lcd.setCursor(45, 388);
         lcd.print("03");
+        lcd.setTextSize(1);
+        lcd.setCursor(45, 413);
+        lcd.print("WFPump");
       }
       else if(index == 3)
       { 
         lcd.fillRect( 43, 425, 38, 38, DARKGREEN);
         lcd.setCursor(45, 427);
         lcd.print("04");
+        lcd.setTextSize(1);
+        lcd.setCursor(45, 452);
+        lcd.print("WSPump");
       }
       else if(index == 4)
       { 
         lcd.fillRect( 82, 386, 38, 38, DARKGREEN);
         lcd.setCursor(84, 388);
         lcd.print("05");
+        lcd.setTextSize(1);
+        lcd.setCursor(84, 413);
+        lcd.print("WCPump");
       }
       else if(index == 5)
       { 
         lcd.fillRect( 82, 425, 38, 38, DARKGREEN);
         lcd.setCursor(84, 427);
         lcd.print("06");
+        lcd.setTextSize(1);
+        lcd.setCursor(84, 452);
+        lcd.print("PCool1");
       }
       else if(index == 6)
       { 
         lcd.fillRect(121, 386, 38, 38, DARKGREEN);
         lcd.setCursor(123, 388);
         lcd.print("07");
+        lcd.setTextSize(1);
+        lcd.setCursor(123, 413);
+        lcd.print("PCool2");
       }
       else if(index == 7)
       { 
         lcd.fillRect(121, 425, 38, 38, DARKGREEN);
         lcd.setCursor(123, 427);
         lcd.print("08");
+        lcd.setTextSize(1);
+        lcd.setCursor(123, 452);
+        lcd.print("CFan1");
       }
       else if(index == 8)
       { 
         lcd.fillRect(160, 386, 38, 38, DARKGREEN);
         lcd.setCursor(162, 388);
         lcd.print("09");
+        lcd.setTextSize(1);
+        lcd.setCursor(162, 413);
+        lcd.print("CFan2");
       }
       else if(index == 9)
       { 
         lcd.fillRect(160, 425, 38, 38, DARKGREEN);
         lcd.setCursor(162, 427);
         lcd.print("10");
+        lcd.setTextSize(1);
+        lcd.setCursor(162, 452);
+        lcd.print("Fog1");
       }
       else if(index == 10)
       { 
         lcd.fillRect(199, 386, 38, 38, DARKGREEN);
         lcd.setCursor(201, 388);
         lcd.print("11");
+        lcd.setTextSize(1);
+        lcd.setCursor(201, 413);
+        lcd.print("Fog2");
       }
       else if(index == 11)
       { 
         lcd.fillRect(199, 425, 38, 38, DARKGREEN);
         lcd.setCursor(201, 427);
         lcd.print("12");
+        lcd.setTextSize(1);
+        lcd.setCursor(201, 452);
+        lcd.print("ExFan");
       }
       else if(index == 12)
       { 
         lcd.fillRect(238, 386, 38, 38, DARKGREEN);
         lcd.setCursor(240, 388);
         lcd.print("13");
+        lcd.setTextSize(1);
+        lcd.setCursor(240, 413);
+        lcd.print("CrFanA");
       }
       else if(index == 13)
       { 
         lcd.fillRect(238, 425, 38, 38, DARKGREEN);
         lcd.setCursor(240, 427);
         lcd.print("14");
+        lcd.setTextSize(1);
+        lcd.setCursor(240, 452);
+        lcd.print("FogFan");
       }
       else if(index == 14)
       { 
         lcd.fillRect(277, 386, 38, 38, DARKGREEN);
         lcd.setCursor(279, 388);
         lcd.print("15");
+        lcd.setTextSize(1);
+        lcd.setCursor(279, 413);
+        lcd.print("Self");
       }
       else if(index == 15)
       { 
@@ -185,90 +230,135 @@ void updateRelayState(int index, boolean value)
         lcd.fillRect(  4, 386, 38, 38, DARKRED);
         lcd.setCursor(6, 388);
         lcd.print("01");
+        lcd.setTextSize(1);
+        lcd.setCursor(6, 413);
+        lcd.print("GLt1");
       }
       else if(index == 1)
       {
         lcd.fillRect(  4, 425, 38, 38, DARKRED);
         lcd.setCursor(6, 427);
         lcd.print("02");
+        lcd.setTextSize(1);
+        lcd.setCursor(6, 452);
+        lcd.print("GLt2");
       }
       else if(index == 2)
       { 
         lcd.fillRect( 43, 386, 38, 38, DARKRED);
         lcd.setCursor(45, 388);
         lcd.print("03");
+        lcd.setTextSize(1);
+        lcd.setCursor(45, 413);
+        lcd.print("WFPump");
       }
       else if(index == 3)
       { 
         lcd.fillRect( 43, 425, 38, 38, DARKRED);
         lcd.setCursor(45, 427);
         lcd.print("04");
+        lcd.setTextSize(1);
+        lcd.setCursor(45, 452);
+        lcd.print("WSPump");
       }
       else if(index == 4)
       { 
         lcd.fillRect( 82, 386, 38, 38, DARKRED);
         lcd.setCursor(84, 388);
         lcd.print("05");
+        lcd.setTextSize(1);
+        lcd.setCursor(84, 413);
+        lcd.print("WCPump");
       }
       else if(index == 5)
       { 
         lcd.fillRect( 82, 425, 38, 38, DARKRED);
         lcd.setCursor(84, 427);
         lcd.print("06");
+        lcd.setTextSize(1);
+        lcd.setCursor(84, 452);
+        lcd.print("PCool1");
       }
       else if(index == 6)
       { 
         lcd.fillRect(121, 386, 38, 38, DARKRED);
         lcd.setCursor(123, 388);
         lcd.print("07");
+        lcd.setTextSize(1);
+        lcd.setCursor(123, 413);
+        lcd.print("PCool2");
       }
       else if(index == 7)
       { 
         lcd.fillRect(121, 425, 38, 38, DARKRED);
         lcd.setCursor(123, 427);
         lcd.print("08");
+        lcd.setTextSize(1);
+        lcd.setCursor(123, 452);
+        lcd.print("CFan1");
       }
       else if(index == 8)
       { 
         lcd.fillRect(160, 386, 38, 38, DARKRED);
         lcd.setCursor(162, 388);
         lcd.print("09");
+        lcd.setTextSize(1);
+        lcd.setCursor(162, 413);
+        lcd.print("CFan2");
       }
       else if(index == 9)
       { 
         lcd.fillRect(160, 425, 38, 38, DARKRED);
         lcd.setCursor(162, 427);
         lcd.print("10");
+        lcd.setTextSize(1);
+        lcd.setCursor(162, 452);
+        lcd.print("Fog1");
       }
       else if(index == 10)
       { 
         lcd.fillRect(199, 386, 38, 38, DARKRED);
         lcd.setCursor(201, 388);
         lcd.print("11");
+        lcd.setTextSize(1);
+        lcd.setCursor(201, 413);
+        lcd.print("Fog2");
       }
       else if(index == 11)
       { 
         lcd.fillRect(199, 425, 38, 38, DARKRED);
         lcd.setCursor(201, 427);
         lcd.print("12");
+        lcd.setTextSize(1);
+        lcd.setCursor(201, 452);
+        lcd.print("ExFan");
       }
       else if(index == 12)
       { 
         lcd.fillRect(238, 386, 38, 38, DARKRED);
         lcd.setCursor(240, 388);
         lcd.print("13");
+        lcd.setTextSize(1);
+        lcd.setCursor(240, 413);
+        lcd.print("CrFan");
       }
       else if(index == 13)
       { 
         lcd.fillRect(238, 425, 38, 38, DARKRED);
         lcd.setCursor(240, 427);
         lcd.print("14");
+        lcd.setTextSize(1);
+        lcd.setCursor(240, 452);
+        lcd.print("FogFan");
       }
       else if(index == 14)
       { 
         lcd.fillRect(277, 386, 38, 38, DARKRED);
         lcd.setCursor(279, 388);
         lcd.print("15");
+        lcd.setTextSize(1);
+        lcd.setCursor(279, 413);
+        lcd.print("Self");
       }
       else if(index == 15)
       { 
@@ -296,11 +386,11 @@ boolean getRelayResponse()
     relayReplyCount = 0;
     //Serial.println();
     if(relayReply[1] == 0x0c){
-      Serial.println("relay switch state changed");
+      //Serial.println("relay switch state changed");
       for(int i=0 ; i<16 ; i++)
       {
         updateRelayState(i, relayReply[2+i] == 0x01);
-        printRelayState(i);
+        //printRelayState(i);
       }
     }
     return true;
@@ -410,7 +500,7 @@ boolean relayGetState(uint8_t index)
 
 boolean relaySetState(uint8_t index, boolean state)
 {
-  unsigned long setStateInterval = millis() - relayLastSetStateMs;
+  unsigned long setStateInterval = millis() - relayLastSetStateMs[index];
   if( setStateInterval < relayMinSetStateInterval)
   {
     delay(relayMinSetStateInterval - setStateInterval);
@@ -437,7 +527,7 @@ boolean relaySetState(uint8_t index, boolean state)
   relayClient.write(switchCMD, sizeof(switchCMD));
   relayClient.flush();
   waitRelayResponse();
-  relayLastSetStateMs = millis();
+  relayLastSetStateMs[index] = millis();
 
   return relayGetState(index);
 }
@@ -487,9 +577,10 @@ String relayHandleWebRequest(const String& url)
       Serial.print("(web) relay set invalid ndx");
     }
   }
-  String result = "\"relay\":[";
+  String result = "\t\"relay\":[\r\n";
   for(int i=0 ; i<16 ; i++)
   {
+    result += "\t\t";
     if(relayGetState(i))
     {
       result += "1";
@@ -499,7 +590,7 @@ String relayHandleWebRequest(const String& url)
       result += "0";
     }
     if(i <= 14){
-      result +=",";
+      result +=",\r\n";
     }
   }
   result+= "]";
@@ -510,31 +601,37 @@ String relayHandleWebRequest(const String& url)
 
 void initRelayClient()
 {
-  lcd.drawLine(197,480,197,467,DARKGREEN);
-  lcd.drawLine(197,467,320,467,DARKGREEN);
-  lcd.drawLine(0  ,382,320,382,DARKGREEN);
+  Serial.println("initializing relay client...");
+  lcd.startWrite();
+  
+  lcd.fillRect(  0, 381, 320, 99, BLACKGREEN);
+  lcd.writeLine(197,480,197,467,LIGHTGREEN);
+  lcd.writeLine(197,467,320,467,LIGHTGREEN);
+  lcd.writeLine(0  ,380,320,380,LIGHTGREEN);
+  
+  lcd.writeFillRect(  4, 386, 38, 38, DARKRED);
+  lcd.writeFillRect( 43, 386, 38, 38, DARKRED);
+  lcd.writeFillRect( 82, 386, 38, 38, DARKRED);
+  lcd.writeFillRect(121, 386, 38, 38, DARKRED);
+  lcd.writeFillRect(160, 386, 38, 38, DARKRED);
+  lcd.writeFillRect(199, 386, 38, 38, DARKRED);
+  lcd.writeFillRect(238, 386, 38, 38, DARKRED);
+  lcd.writeFillRect(277, 386, 38, 38, DARKRED);
+  
+  lcd.writeFillRect(  4, 425, 38, 38, DARKRED);
+  lcd.writeFillRect( 43, 425, 38, 38, DARKRED);
+  lcd.writeFillRect( 82, 425, 38, 38, DARKRED);
+  lcd.writeFillRect(121, 425, 38, 38, DARKRED);
+  lcd.writeFillRect(160, 425, 38, 38, DARKRED);
+  lcd.writeFillRect(199, 425, 38, 38, DARKRED);
+  lcd.writeFillRect(238, 425, 38, 38, DARKRED);
+  lcd.writeFillRect(277, 425, 38, 38, DARKRED);
+
+  lcd.endWrite();
 
   lcd.setTextColor(LIGHTRED);
   lcd.setTextSize(2);
   
-  lcd.fillRect(  4, 386, 38, 38, DARKRED);
-  lcd.fillRect( 43, 386, 38, 38, DARKRED);
-  lcd.fillRect( 82, 386, 38, 38, DARKRED);
-  lcd.fillRect(121, 386, 38, 38, DARKRED);
-  lcd.fillRect(160, 386, 38, 38, DARKRED);
-  lcd.fillRect(199, 386, 38, 38, DARKRED);
-  lcd.fillRect(238, 386, 38, 38, DARKRED);
-  lcd.fillRect(277, 386, 38, 38, DARKRED);
-  
-  lcd.fillRect(  4, 425, 38, 38, DARKRED);
-  lcd.fillRect( 43, 425, 38, 38, DARKRED);
-  lcd.fillRect( 82, 425, 38, 38, DARKRED);
-  lcd.fillRect(121, 425, 38, 38, DARKRED);
-  lcd.fillRect(160, 425, 38, 38, DARKRED);
-  lcd.fillRect(199, 425, 38, 38, DARKRED);
-  lcd.fillRect(238, 425, 38, 38, DARKRED);
-  lcd.fillRect(277, 425, 38, 38, DARKRED);
-
   lcd.setCursor(6, 388);
   lcd.print("01");
 
@@ -582,8 +679,68 @@ void initRelayClient()
 
   lcd.setCursor(279, 427);
   lcd.print("16");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(6, 413);
+  lcd.print("GLt1");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(45, 413);
+  lcd.print("WFPump");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(45, 452);
+  lcd.print("WSPump");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(6, 452);
+  lcd.print("GLt2");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(84, 413);
+  lcd.print("WCPump");
   
-  lcd.setCursor(4, 470);
+  lcd.setTextSize(1);
+  lcd.setCursor(84, 452);
+  lcd.print("PCool1");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(123, 413);
+  lcd.print("PCool2");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(123, 452);
+  lcd.print("CFan1");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(162, 413);
+  lcd.print("CFan2");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(162, 452);
+  lcd.print("Fog1");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(201, 413);
+  lcd.print("Fog2");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(201, 452);
+  lcd.print("ExFan");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(240, 413);
+  lcd.print("CrFan");
+  
+  lcd.setTextSize(1);
+  lcd.setCursor(240, 452);
+  lcd.print("FogFan");
+
+  lcd.setTextSize(1);
+  lcd.setCursor(279, 413);
+  lcd.print("Self");
+  
+  lcd.setCursor(5, 469);
   lcd.setTextColor(GREEN);
   lcd.setTextSize(1);
   lcd.print("Relay State");
@@ -594,6 +751,8 @@ void initRelayClient()
     relayClient.flush();
     waitRelayResponse();
   }
+
+  Serial.println("relay client initialization done.");
 }
 
 
